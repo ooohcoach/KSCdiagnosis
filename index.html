@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KSC 유형 진단 | 케이코칭컴퍼니</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700&family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
+
+:root{
+  --navy:#111820;
+  --navy-soft:#1b2530;
+  --teal:#147D90;
+  --teal-soft:#1c93a8;
+  --gold:#D4AF37;
+  --ivory:#F3EFE6;
+  --ink:#E9E6DD;
+  --dim:#8b95a1;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+  background:var(--navy);
+  color:var(--ink);
+  font-family:'Noto Sans KR',sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  line-height:1.6;
+}
+
+.app{
+  width:100%;
+  max-width:640px;
+  position:relative;
+}
+
+/* thread motif — connects each screen visually */
+.thread{
+  position:fixed;
+  top:0; left:0;
+  width:100%;
+  height:3px;
+  background:var(--navy-soft);
+  z-index:10;
+}
+.thread-fill{
+  height:100%;
+  background:linear-gradient(90deg, var(--teal), var(--gold));
+  width:0%;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+}
+
+.card{
+  background:var(--navy-soft);
+  border:1px solid rgba(212,175,55,.15);
+  border-radius:2px;
+  padding:56px 44px;
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:'';
+  position:absolute;
+  top:0; left:0;
+  width:4px; height:100%;
+  background:var(--teal);
+}
+
+/* ---------- INTRO ---------- */
+.eyebrow{
+  font-size:13px;
+  letter-spacing:.2em;
+  color:var(--gold);
+  font-weight:600;
+  margin-bottom:20px;
+  text-transform:uppercase;
+}
+h1{
+  font-family:'Noto Serif KR',serif;
+  font-size:30px;
+  font-weight:700;
+  line-height:1.45;
+  color:var(--ivory);
+  margin-bottom:18px;
+}
+.lede{
+  font-size:15.5px;
+  color:var(--dim);
+  margin-bottom:36px;
+}
+.lede strong{color:var(--ink); font-weight:500;}
+
+.type-preview{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:40px;
+}
+.type-chip{
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  padding:14px 16px;
+  background:rgba(20,125,144,.08);
+  border-left:2px solid var(--teal-soft);
+  font-size:13.5px;
+  color:var(--dim);
+}
+.type-chip b{
+  color:var(--gold);
+  font-family:'Noto Serif KR',serif;
+  font-size:14px;
+  flex-shrink:0;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:var(--gold);
+  color:var(--navy);
+  border:none;
+  padding:16px 32px;
+  font-size:15px;
+  font-weight:700;
+  font-family:'Noto Sans KR',sans-serif;
+  cursor:pointer;
+  letter-spacing:.02em;
+  transition:transform .15s ease, background .15s ease;
+  width:100%;
+  justify-content:center;
+}
+.btn:hover{background:#e2c05a; transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.btn-ghost{
+  background:transparent;
+  color:var(--dim);
+  border:1px solid rgba(139,149,161,.3);
+  font-weight:500;
+  margin-top:14px;
+}
+.btn-ghost:hover{background:rgba(255,255,255,.03); color:var(--ink);}
+
+/* ---------- QUIZ ---------- */
+.qmeta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:28px;
+  font-size:12.5px;
+  color:var(--dim);
+  letter-spacing:.05em;
+}
+.qmeta .dots{display:flex; gap:5px;}
+.dot{width:5px; height:5px; border-radius:50%; background:rgba(139,149,161,.35);}
+.dot.done{background:var(--gold);}
+.dot.now{background:var(--teal-soft); width:14px; border-radius:3px;}
+
+.qtext{
+  font-family:'Noto Serif KR',serif;
+  font-size:22px;
+  line-height:1.6;
+  color:var(--ivory);
+  margin-bottom:36px;
+  min-height:110px;
+}
+
+.scale{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.opt{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 16px;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.06);
+  cursor:pointer;
+  transition:all .15s ease;
+  font-size:14.5px;
+  color:var(--ink);
+}
+.opt:hover{border-color:var(--teal-soft); background:rgba(20,125,144,.08);}
+.opt .num{
+  width:26px; height:26px;
+  border-radius:50%;
+  border:1px solid var(--dim);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; color:var(--dim); flex-shrink:0;
+}
+.opt:hover .num{border-color:var(--gold); color:var(--gold);}
+
+.nav-row{
+  display:flex;
+  justify-content:space-between;
+  margin-top:28px;
+}
+.back-link{
+  color:var(--dim);
+  font-size:13px;
+  cursor:pointer;
+  background:none; border:none;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.back-link:hover{color:var(--ink);}
+
+/* ---------- RESULT ---------- */
+.result-tag{
+  font-size:12.5px;
+  letter-spacing:.15em;
+  color:var(--teal-soft);
+  font-weight:700;
+  margin-bottom:14px;
+  text-transform:uppercase;
+}
+.result-title{
+  font-family:'Noto Serif KR',serif;
+  font-size:26px;
+  font-weight:700;
+  color:var(--gold);
+  line-height:1.5;
+  margin-bottom:20px;
+}
+.result-desc{
+  font-size:15px;
+  color:var(--ink);
+  margin-bottom:8px;
+}
+.quote{
+  margin:22px 0;
+  padding:16px 18px;
+  border-left:2px solid var(--gold);
+  background:rgba(212,175,55,.06);
+  font-size:13.5px;
+  color:var(--dim);
+  font-style:normal;
+}
+
+.section-label{
+  font-size:12px;
+  letter-spacing:.1em;
+  color:var(--dim);
+  text-transform:uppercase;
+  margin:32px 0 12px;
+  font-weight:600;
+}
+.practice-box{
+  background:rgba(20,125,144,.1);
+  border:1px solid rgba(20,125,144,.25);
+  padding:22px 20px;
+  margin-bottom:16px;
+}
+.practice-box h3{
+  font-family:'Noto Serif KR',serif;
+  font-size:16px;
+  color:var(--ivory);
+  margin-bottom:10px;
+}
+.practice-box ul{
+  margin:0;
+  padding-left:18px;
+  font-size:14px;
+  color:var(--dim);
+}
+.practice-box li{margin-bottom:6px;}
+
+.score-bars{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin:20px 0 8px;
+}
+.score-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:12px;
+  color:var(--dim);
+}
+.score-row .label{width:78px; flex-shrink:0;}
+.score-track{
+  flex:1;
+  height:6px;
+  background:rgba(255,255,255,.06);
+  position:relative;
+}
+.score-track .fill{
+  height:100%;
+  background:var(--teal-soft);
+}
+.score-row.top .fill{background:var(--gold);}
+.score-row.top .label{color:var(--gold); font-weight:600;}
+
+.cta{
+  margin-top:36px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,.08);
+  text-align:center;
+}
+.cta p{
+  font-size:13.5px;
+  color:var(--dim);
+  margin-bottom:16px;
+}
+.brand{
+  text-align:center;
+  margin-top:20px;
+  font-size:11px;
+  letter-spacing:.15em;
+  color:rgba(139,149,161,.6);
+  text-transform:uppercase;
+}
+
+.hidden{display:none;}
+
+@media (max-width:480px){
+  .card{padding:40px 24px;}
+  h1{font-size:24px;}
+  .qtext{font-size:19px;}
+}
+</style>
+</head>
+<body>
+
+<div class="thread"><div class="thread-fill" id="threadFill"></div></div>
+
+<div class="app">
+
+  <!-- INTRO -->
+  <div class="card" id="screen-intro">
+    <div class="eyebrow">KSC 특강 · 자가진단</div>
+    <h1>KSC는 프로세스 질문을 하지 말라는데,<br>그럼 대체 어떻게 코칭하죠?</h1>
+    <p class="lede">막막함의 이유는 실력이 아니라 <strong>유형</strong>에 있을 수 있습니다. 지금 나의 코칭이 세 가지 중 어디에 가까운지부터 확인해보겠습니다.</p>
+
+    <div class="type-preview">
+      <div class="type-chip"><b>유형 1</b> KPC 프로세스에 능통 — 오래 익숙해진 순서를 벗어나기 어렵다</div>
+      <div class="type-chip"><b>유형 2</b> 맥락은 듣지만 깊이가 없다 — 프로세스는 벗어났지만 표면에 머문다</div>
+      <div class="type-chip"><b>유형 3</b> 코치 중심으로 기울어짐 — 질문은 KSC스러운데 파트너십이 깨진다</div>
+    </div>
+
+    <button class="btn" onclick="startQuiz()">12개 문항으로 진단 시작하기 →</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="card hidden" id="screen-quiz">
+    <div class="qmeta">
+      <span id="qcounter">문항 1 / 12</span>
+      <div class="dots" id="dots"></div>
+    </div>
+    <div class="qtext" id="qtext"></div>
+    <div class="scale" id="scale"></div>
+    <div class="nav-row">
+      <button class="back-link" id="backBtn" onclick="goBack()">← 이전 문항</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="card hidden" id="screen-result">
+    <div class="result-tag" id="resultTag"></div>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <div class="quote" id="resultQuote"></div>
+
+    <div class="section-label">유형별 점수</div>
+    <div class="score-bars" id="scoreBars"></div>
+
+    <div class="section-label">지금 필요한 연습</div>
+    <div class="practice-box">
+      <h3 id="practiceTitle"></h3>
+      <ul id="practiceList"></ul>
+    </div>
+
+    <div class="cta">
+      <p>진단 결과는 고정된 낙인이 아니라 지금 연습이 필요한 지점을 보여주는 지표입니다.<br>특강에서 실제 사례로 연습해보겠습니다.</p>
+      <button class="btn-ghost btn" onclick="restart()" style="background:transparent;">다시 진단하기</button>
+    </div>
+
+    <div class="brand">K Coaching Company · 자아통합 라이프코칭</div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  // Type 1 — KPC 프로세스 의존
+  {type:1, text:"코칭세션에서 표면적인 목표 설정, 미래 모습 상상, 가치, 존재 질문을 같은 순서로 질문한다."},
+  {type:1, text:"다음 질문이 떠오르지 않으면 습관적으로 하는 질문 패턴이 있다."},
+  {type:1, text:"세션이 끝난 후엔 '고객의 어떤 말을 따라갔나'보다 '프로세스 단계를 다 채웠나'를 먼저 점검한다."},
+  {type:1, text:"고객의 말이 예상한 흐름을 벗어나면 불안해진다."},
+
+  // Type 2 — 맥락은 듣지만 깊이 없음
+  {type:2, text:"KPC 프로세스에서는 벗어났지만, 무엇을 물어야 할지 자신이 없어 반영이 길어진다."},
+  {type:2, text:"고객의 키워드는 따라가지만 표면적 공감 확인에서 멈춘다."},
+  {type:2, text:"고객이 감정이나 신념까지 내려가지 않고, 표면적 설명 수준에서 맴돌다가 세션이 끝나는 경우가 많다."},
+  {type:2, text:"슈퍼비전이나 피드백에서 좀 더 들어가라는 말을 자주 듣는다."},
+
+  // Type 3 — 코치 중심
+  {type:3, text:"고객의 이야기를 들으면 '이건 이런 패턴이구나' 가설이 빨리 세워지고, 그 가설을 질문에 담아 확인받고 싶어진다."},
+  {type:3, text:"내 질문에 고객이 다른 방향으로 이야기를 끌고 가면, 불안하고 초조해져서 빨리 내 흐름으로 되돌리려고 한다."},
+  {type:3, text:"고객의 언어를 그대로 질문에 연결하기보다는 내가 이해한 언어로 바꾸어서 질문을 만든다."},
+  {type:3, text:"코칭의 성과를 내가 좋은 질문을 했다, 내가 생각하기에 고객의 통찰이 의미 있었다고 평가한다."},
+];
+
+const options = [
+  {label:"전혀 아니다", val:1},
+  {label:"별로 아니다", val:2},
+  {label:"보통이다", val:3},
+  {label:"꽤 그렇다", val:4},
+  {label:"매우 그렇다", val:5},
+];
+
+const typeInfo = {
+  1:{
+    tag:"유형 1 · KPC 프로세스 의존형",
+    title:"오래 걸어온 길이라 벗어나기가 낯설 뿐입니다",
+    desc:"KPC 프로세스로 오랫동안 실전 코칭을 해오셨기 때문에, 그 순서가 몸에 배어 있습니다. 실력이 없어서가 아니라 익숙한 지도를 내려놓는 연습이 아직 없었을 뿐입니다.",
+    quote:"\"질문이 막히면 결국 목표·현실·대안·실행으로 돌아가게 돼요.\" — 이런 순간이 바로 벗어나는 연습이 필요한 지점입니다.",
+    practiceTitle:"연습 1 · KPC 프로세스에서 벗어나는 연습",
+    practices:[
+      "세션 전 '오늘은 목표를 먼저 확인하지 않는다'를 의도적으로 정하고 시작하기",
+      "다음 질문이 막힐 때, 프로세스 질문 대신 고객이 방금 쓴 단어 하나를 그대로 되짚어 질문하기",
+      "10분짜리 무자유 세션(구조 없이 고객의 말만 따라가는)을 동료와 반복 연습하기",
+      "세션 후 셀프 체크: '나는 순서를 채웠나' 대신 '나는 고객의 어떤 키워드를 따라갔나'로 질문 바꾸기",
+    ]
+  },
+  2:{
+    tag:"유형 2 · 맥락은 듣지만 깊이가 없는 형",
+    title:"프로세스는 벗어났지만, 아직 표면에 머물러 있습니다",
+    desc:"프로세스에 기대지 않는 것만으로도 이미 큰 전환을 이루셨습니다. 지금 필요한 건 방향이 아니라 '깊이' — 감정과 신념까지 내려가는 질문 근육입니다.",
+    quote:"\"조금 더 들어갈 수 있었는데.\" — 슈퍼비전에서 자주 듣는 이 피드백이, 깊이 들어가는 연습이 필요하다는 신호입니다.",
+    practiceTitle:"연습 2 · 깊이 들어가는 연습",
+    practices:[
+      "고객이 상황을 설명하면 바로 다음 질문을 감정 또는 신념 레벨로 전환하기 (예: '그 상황에서 어떤 마음이 올라오세요?')",
+      "표면적 공감 질문(\"힘드셨겠어요\") 뒤에 반드시 한 겹 더 들어가는 질문 붙이기",
+      "침묵을 견디는 연습 — 질문이 안 떠올라도 3초 더 기다렸다가 묻기",
+      "세션 녹취를 다시 들으며 '내가 멈춘 지점'과 '더 내려갈 수 있었던 지점'을 표시해보기",
+    ]
+  },
+  3:{
+    tag:"유형 3 · 코치 중심형",
+    title:"질문의 형태는 KSC인데, 방향이 코치에게서 출발하고 있습니다",
+    desc:"가설을 빠르게 세우는 능력은 강점입니다. 다만 그 가설이 질문에 은근히 답을 담아 전달되면서, 수평적 파트너십이 깨졌다는 피드백으로 이어지고 있을 가능성이 높습니다.",
+    quote:"\"내가 답을 유도한 것 같다.\" — 이 찜찜함이 남는다면, 정답 확인의 주체를 고객에게 돌려주는 연습이 필요합니다.",
+    practiceTitle:"연습 3 · 중립 언어로 의도·가설은 세우되 정답은 고객에게 확인하기",
+    practices:[
+      "가설이 세워지면 단정형 질문 대신 확인형 질문으로 바꾸기 (예: '이런 패턴 같아요' → '제가 듣기엔 ~처럼 느껴지는데, 어떠세요?')",
+      "고객이 다른 방향으로 이야기를 끌고 갈 때, 원래 흐름으로 되돌리고 싶은 충동을 알아차리고 한 번 더 따라가 보기",
+      "질문 하나를 던진 뒤, 그 질문이 '내 가설의 확인'인지 '고객 자신의 발견'을 위한 것인지 스스로 점검하기",
+      "세션 후 '내가 만족한 질문'과 '고객이 스스로 도달한 지점'이 일치했는지 구분해서 기록하기",
+    ]
+  }
+};
+
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+function startQuiz(){
+  document.getElementById('screen-intro').classList.add('hidden');
+  document.getElementById('screen-quiz').classList.remove('hidden');
+  renderDots();
+  renderQuestion();
+}
+
+function renderDots(){
+  const dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = '';
+  questions.forEach((q,i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===current?' now':(answers[i]!==null?' done':''));
+    dotsEl.appendChild(d);
+  });
+}
+
+function renderQuestion(){
+  const q = questions[current];
+  document.getElementById('qcounter').textContent = `문항 ${current+1} / ${questions.length}`;
+  document.getElementById('qtext').textContent = q.text;
+  document.getElementById('backBtn').style.visibility = current===0 ? 'hidden' : 'visible';
+
+  const scaleEl = document.getElementById('scale');
+  scaleEl.innerHTML = '';
+  options.forEach((opt, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'opt';
+    div.innerHTML = `<span class="num">${opt.val}</span><span>${opt.label}</span>`;
+    div.onclick = ()=> selectAnswer(opt.val);
+    scaleEl.appendChild(div);
+  });
+
+  document.getElementById('threadFill').style.width = `${((current)/questions.length)*100}%`;
+  renderDots();
+}
+
+function selectAnswer(val){
+  answers[current] = val;
+  if(current < questions.length - 1){
+    current++;
+    renderQuestion();
+  } else {
+    document.getElementById('threadFill').style.width = '100%';
+    showResult();
+  }
+}
+
+function goBack(){
+  if(current > 0){
+    current--;
+    renderQuestion();
+  }
+}
+
+function showResult(){
+  const scores = {1:0, 2:0, 3:0};
+  questions.forEach((q,i)=>{
+    scores[q.type] += (answers[i] || 0);
+  });
+
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const topType = parseInt(sorted[0][0]);
+  const info = typeInfo[topType];
+
+  document.getElementById('screen-quiz').classList.add('hidden');
+  document.getElementById('screen-result').classList.remove('hidden');
+
+  document.getElementById('resultTag').textContent = info.tag;
+  document.getElementById('resultTitle').textContent = info.title;
+  document.getElementById('resultDesc').textContent = info.desc;
+  document.getElementById('resultQuote').textContent = info.quote;
+  document.getElementById('practiceTitle').textContent = info.practiceTitle;
+
+  const list = document.getElementById('practiceList');
+  list.innerHTML = '';
+  info.practices.forEach(p=>{
+    const li = document.createElement('li');
+    li.textContent = p;
+    list.appendChild(li);
+  });
+
+  const maxScore = 20;
+  const barsEl = document.getElementById('scoreBars');
+  barsEl.innerHTML = '';
+  const labels = {1:'유형 1', 2:'유형 2', 3:'유형 3'};
+  sorted.forEach(([type, score])=>{
+    const row = document.createElement('div');
+    row.className = 'score-row' + (parseInt(type)===topType ? ' top' : '');
+    row.innerHTML = `<span class="label">${labels[type]}</span><div class="score-track"><div class="fill" style="width:${(score/maxScore)*100}%"></div></div><span>${score}/${maxScore}</span>`;
+    barsEl.appendChild(row);
+  });
+}
+
+function restart(){
+  current = 0;
+  answers = new Array(questions.length).fill(null);
+  document.getElementById('screen-result').classList.add('hidden');
+  document.getElementById('screen-intro').classList.remove('hidden');
+  document.getElementById('threadFill').style.width = '0%';
+}
+</script>
+
+</body>
+</html>
